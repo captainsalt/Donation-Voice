@@ -20,8 +20,8 @@ namespace DonationVoice.Services
         public string GenerateFileNameFromString(string input)
         {
             var invalidChars = string.Join("", Path.GetInvalidFileNameChars());
-            var wordArray = Regex.Split(input, @"\s+").Take(10);
-            var snakeCase = string.Join("-", wordArray);
+            var wordArray = Regex.Split(input, @"\P{L}").Take(10);
+            var snakeCase = string.Join("-", wordArray).ToLower();
             var cleansed = Regex.Replace(snakeCase, @$"[{invalidChars}]", "");
 
             return cleansed += ".ogg";
