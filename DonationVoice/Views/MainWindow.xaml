@@ -1,0 +1,27 @@
+﻿<Window x:Class="DonationVoice.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:prism="http://prismlibrary.com/"
+        xmlns:donationvoice="clr-namespace:DonationVoice"
+        prism:ViewModelLocator.AutoWireViewModel="True"
+        Title="DonationVoice" Height="350" Width="525" >
+
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBox Margin="1" Grid.Row="0" Text="{Binding Input}"></TextBox>
+        <Button Margin="1" Grid.Row="1" Command="{Binding ClearText}">Clear</Button>
+        <ListBox Margin="1" Grid.Row="2" ItemsSource="{Binding VoiceList}" SelectedItem="{Binding SelectedVoice}"></ListBox>
+        <Button Margin="1" Grid.Row="3" Command="{Binding GetVoice}">Download voice line</Button>
+        <Button Margin="1" Grid.Row="4" Command="{Binding OpenSaveDirectory}">Open save folder</Button>
+        <TextBlock Margin="1" Grid.Row="5" TextAlignment="Center" Text="{Binding Prompt}"></TextBlock>
+    </Grid>
+</Window>
