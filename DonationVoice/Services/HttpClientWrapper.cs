@@ -31,7 +31,7 @@ namespace DonationVoice.Services
         }
     }
 
-    public class Response
+    public struct Response
     {
         [JsonProperty("speak_url")]
         public string SpeakUrl { get; set; }
