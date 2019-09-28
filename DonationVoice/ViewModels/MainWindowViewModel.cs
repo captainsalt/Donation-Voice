@@ -5,14 +5,13 @@ using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace DonationVoice.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
         private readonly HttpClientWrapper _client;
+        private readonly FileService _fileService;
         private readonly string _saveDirectory;
         private DelegateCommand _getVoiceCommand;
         private DelegateCommand _openSaveDirectoryCommand;
@@ -64,9 +63,10 @@ namespace DonationVoice.ViewModels
         public DelegateCommand OpenSaveDirectory =>
             _openSaveDirectoryCommand ?? (_openSaveDirectoryCommand = new DelegateCommand(OpenSaveDirectoryCommand));
 
-        public MainWindowViewModel(HttpClientWrapper client)
+        public MainWindowViewModel(HttpClientWrapper client, FileService fileService)
         {
             _client = client;
+            _fileService = fileService;
             _saveDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Voice Lines");
             VoiceList = new List<string>()
             {
@@ -90,9 +90,9 @@ namespace DonationVoice.ViewModels
             };
         }
 
-        void ClearTextCommand() => Input = null;
+        private void ClearTextCommand() => Input = null;
 
-        void OpenSaveDirectoryCommand()
+        private void OpenSaveDirectoryCommand()
         {
             var fileDialog = new OpenFileDialog()
             {
@@ -104,39 +104,13 @@ namespace DonationVoice.ViewModels
 
         private async void GetVoiceCommand()
         {
-            if (SelectedVoice == null || string.IsNullOrWhiteSpace(Input))
-            {
-                return;
-            }
-
-            var nameFragments = Regex.Split(Input, @"\s+").Take(15);
-            var snakeCaseFile = string.Join("-", nameFragments);
+            if (SelectedVoice == null || string.IsNullOrWhiteSpace(Input)) return;
 
             Url = await _client.GetVoiceUrl(Input, SelectedVoice);
 
-            if (nameFragments.Count() == 15)
-            {
-                snakeCaseFile += "...";
-            }
-
-            snakeCaseFile += ".ogg";
-
-
-            var invalidChars = string.Join("", Path.GetInvalidFileNameChars());
-            var stripped = Regex.Replace(snakeCaseFile, @$"[{invalidChars}]", "");
-
-            FullFilePath = Path.Combine(_saveDirectory, SelectedVoice, stripped);
-
-            var fileDirectory = new FileInfo(FullFilePath).DirectoryName;
-
-            if (!Directory.Exists(fileDirectory))
-            {
-                new DirectoryInfo(fileDirectory).Create();
-            }
-
-            using var fs = File.Create(FullFilePath);
-            var stream = await _client.GetStream(Url);
-            await stream.CopyToAsync(fs);
+            var fileName = _fileService.GenerateFileNameFromString(Input);
+            FullFilePath = Path.Combine(_saveDirectory, SelectedVoice, fileName);
+            await _fileService.SaveVoice(FullFilePath, Url);
 
             Prompt = $"Saved to {FullFilePath}";
         }
