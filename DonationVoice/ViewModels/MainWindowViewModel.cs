@@ -1,9 +1,9 @@
 ﻿using DonationVoice.Services;
-using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 
 namespace DonationVoice.ViewModels
@@ -92,15 +92,7 @@ namespace DonationVoice.ViewModels
 
         private void ClearTextCommand() => Input = null;
 
-        private void OpenSaveDirectoryCommand()
-        {
-            var fileDialog = new OpenFileDialog()
-            {
-                InitialDirectory = _saveDirectory
-            };
-
-            fileDialog.ShowDialog();
-        }
+        private void OpenSaveDirectoryCommand() => Process.Start("explorer.exe", _saveDirectory);
 
         private async void GetVoiceCommand()
         {
