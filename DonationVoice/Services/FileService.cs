@@ -16,12 +16,10 @@ namespace DonationVoice.Services
 
         public string GenerateFileNameFromString(string input)
         {
-            var invalidChars = string.Join("", Path.GetInvalidFileNameChars());
-            var wordArray = Regex.Split(input, @"\P{L}").Take(10);
-            var snakeCase = string.Join("-", wordArray).ToLower();
-            var cleansed = Regex.Replace(snakeCase, @$"[{invalidChars}]", "");
+            var cleansed = Regex.Replace(input, @$"[^\w\s]", "");
+            var snakeCase = Regex.Replace(cleansed, @"\s+", "-").Trim();
 
-            return cleansed += ".ogg";
+            return snakeCase += ".ogg";
         }
 
         public async Task SaveVoice(string filePath, string url)
