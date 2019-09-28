@@ -120,7 +120,12 @@ namespace DonationVoice.ViewModels
             }
 
             snakeCaseFile += ".ogg";
-            FullFilePath = Path.Combine(_saveDirectory, SelectedVoice, snakeCaseFile);
+
+
+            var invalidChars = string.Join("", Path.GetInvalidFileNameChars());
+            var stripped = Regex.Replace(snakeCaseFile, @$"[{invalidChars}]", "");
+
+            FullFilePath = Path.Combine(_saveDirectory, SelectedVoice, stripped);
 
             var fileDirectory = new FileInfo(FullFilePath).DirectoryName;
 
