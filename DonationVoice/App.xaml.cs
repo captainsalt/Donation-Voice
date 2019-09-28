@@ -1,6 +1,5 @@
 ﻿using DonationVoice.Views;
 using Prism.Ioc;
-using Prism.Modularity;
 using System.Windows;
 
 namespace DonationVoice
@@ -10,10 +9,7 @@ namespace DonationVoice
     /// </summary>
     public partial class App
     {
-        protected override Window CreateShell()
-        {
-            return Container.Resolve<MainWindow>();
-        }
+        protected override Window CreateShell() => Container.Resolve<MainWindow>();
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
