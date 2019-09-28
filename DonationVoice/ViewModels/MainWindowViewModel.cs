@@ -98,7 +98,17 @@ namespace DonationVoice.ViewModels
         {
             if (SelectedVoice == null || string.IsNullOrWhiteSpace(Input)) return;
 
-            Url = await _client.GetVoiceUrl(Input, SelectedVoice);
+            Prompt = "Please wait...";
+
+            try
+            {
+                Url = await _client.GetVoiceUrl(Input, SelectedVoice);
+            }
+            catch (Exception ex)
+            {
+                Prompt = ex.Message;
+                return;
+            }
 
             var fileName = _fileService.GenerateFileNameFromString(Input);
             FullFilePath = Path.Combine(_saveDirectory, SelectedVoice, fileName);
